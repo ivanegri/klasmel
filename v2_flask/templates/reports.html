@@ -1,0 +1,364 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header flex justify-between items-center">
+        <h2 class="card-title">Relatórios</h2>
+        <div class="flex gap-2">
+            {% if selected_file %}
+            <a href="{{ url_for('download_report', date_str=selected_file.raw_date) }}" class="btn btn-primary"
+                style="font-size: 0.9rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    style="margin-right: 0.5rem;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Baixar Excel
+            </a>
+            {% endif %}
+            <form action="{{ url_for('reports') }}" method="get" class="flex gap-2 items-center">
+                <select name="date" class="form-control" onchange="this.form.submit()" style="width: auto;">
+                    {% for opt in file_options %}
+                    <option value="{{ opt.raw_date }}" {% if selected_file and selected_file.raw_date==opt.raw_date
+                        %}selected{% endif %}>
+                        {{ opt.date_str }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+    </div>
+
+    {% if report_data %}
+    <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        <div class="card" style="margin: 0; text-align: center;">
+            <div style="font-size: 2rem; font-weight: 700; color: var(--primary-color);">{{ report_data.total_items }}
+            </div>
+            <div style="color: var(--secondary-color);">Itens Totais</div>
+        </div>
+        <div class="card" style="margin: 0; text-align: center;">
+            <div style="font-size: 2rem; font-weight: 700; color: var(--success-color);">{{ report_data.total_stock }}
+            </div>
+            <div style="color: var(--secondary-color);">Estoque Total</div>
+        </div>
+        <div class="card" style="margin: 0; text-align: center;">
+            <div style="font-size: 2rem; font-weight: 700; color: var(--danger-color);">{{ report_data.items_to_produce
+                }}</div>
+            <div style="color: var(--secondary-color);">Itens para Produzir</div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Top 10 - Maior Estoque</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Grupo</th>
+                        <th>Produto</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in report_data.top_stock %}
+                    <tr>
+                        <td>{{ item['Grupo'] }}</td>
+                        <td>{{ item['Produto'] }}</td>
+                        <td>{{ item['TOTAL'] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Top 10 - Necessidade de Produção</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Grupo</th>
+                        <th>Produto</th>
+                        <th>Produzir</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in report_data.top_prod %}
+                    <tr>
+                        <td>{{ item['Grupo'] }}</td>
+                        <td>{{ item['Produto'] }}</td>
+                        <td>{{ item['Planejamento de Produção '] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Top 10 - Superávit (Acima do Mínimo)</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Grupo</th>
+                        <th>Produto</th>
+                        <th>Total</th>
+                        <th>Mínimo</th>
+                        <th>Diferença</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in report_data.top_surplus %}
+                    <tr>
+                        <td>{{ item['Grupo'] }}</td>
+                        <td>{{ item['Produto'] }}</td>
+                        <td>{{ item['TOTAL'] }}</td>
+                        <td>{{ item['Estoque Minimo'] }}</td>
+                        <td style="color: var(--success-color);">+{{ item['Diferenca'] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Top 10 - Déficit (Abaixo do Mínimo)</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Grupo</th>
+                        <th>Produto</th>
+                        <th>Total</th>
+                        <th>Mínimo</th>
+                        <th>Diferença</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in report_data.top_deficit %}
+                    <tr>
+                        <td>{{ item['Grupo'] }}</td>
+                        <td>{{ item['Produto'] }}</td>
+                        <td>{{ item['TOTAL'] }}</td>
+                        <td>{{ item['Estoque Minimo'] }}</td>
+                        <td style="color: var(--danger-color);">{{ item['Diferenca'] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center" style="padding: 2rem;">
+        <p>Nenhum relatório encontrado.</p>
+    </div>
+    {% endif %}
+
+    {% if history and history.dates %}
+    <div style="margin-top: 3rem;">
+        <h2 class="card-title" style="margin-bottom: 1.5rem;">Evolução Temporal</h2>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Evolução por Grupo</h3>
+            </div>
+            <div style="padding: 1rem; border-bottom: 1px solid var(--border-color);">
+                <div style="margin-bottom: 1rem; display: flex; gap: 0.5rem;">
+                    <button type="button" id="selectAllGroups" class="btn"
+                        style="padding: 0.25rem 0.75rem; font-size: 0.85rem; background-color: var(--bg-color); border: 1px solid var(--border-color);">Selecionar
+                        Todos</button>
+                    <button type="button" id="deselectAllGroups" class="btn"
+                        style="padding: 0.25rem 0.75rem; font-size: 0.85rem; background-color: var(--bg-color); border: 1px solid var(--border-color);">Deselecionar
+                        Todos</button>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+                    {% for g in history.groups %}
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem;">
+                        <input type="checkbox" class="group-checkbox" value="{{ loop.index0 }}" checked>
+                        <span
+                            style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: hsl({{ loop.index0 * 360 / history.groups|length }}, 70%, 50%);"></span>
+                        {{ g.label }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div style="height: 400px; padding: 1rem;">
+                <canvas id="groupsChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header flex justify-between items-center">
+                <h3 class="card-title">Evolução por Produto</h3>
+                <div class="flex gap-2">
+                    <select id="productGroupSelect" class="form-control" style="width: auto; max-width: 200px;">
+                        <option value="all">Todos os Grupos</option>
+                        {% for g in history.groups %}
+                        <option value="{{ g.label }}">{{ g.label }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="productSelect" class="form-control" style="width: auto; max-width: 300px;">
+                        <option value="all">Todos os Produtos</option>
+                        {% for p in history.products %}
+                        <option value="{{ loop.index0 }}" data-group="{{ p.group }}">{{ p.label }} ({{ p.group }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div style="height: 400px;">
+                <canvas id="productsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const historyData = {{ history | tojson }};
+
+        // Groups Chart
+        const ctxGroups = document.getElementById('groupsChart').getContext('2d');
+        const groupsChart = new Chart(ctxGroups, {
+            type: 'line',
+            data: {
+                labels: historyData.dates,
+                datasets: historyData.groups.map((g, i) => ({
+                    label: g.label,
+                    data: g.data,
+                    borderColor: `hsl(${i * 360 / historyData.groups.length}, 70%, 50%)`,
+                    tension: 0.1
+                }))
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Handle Group Checkboxes
+        document.querySelectorAll('.group-checkbox').forEach(cb => {
+            cb.addEventListener('change', (e) => {
+                const index = parseInt(e.target.value);
+                const isVisible = e.target.checked;
+
+                groupsChart.setDatasetVisibility(index, isVisible);
+                groupsChart.update();
+            });
+        });
+
+        document.getElementById('selectAllGroups').addEventListener('click', () => {
+            document.querySelectorAll('.group-checkbox').forEach(cb => {
+                cb.checked = true;
+                groupsChart.setDatasetVisibility(parseInt(cb.value), true);
+            });
+            groupsChart.update();
+        });
+
+        document.getElementById('deselectAllGroups').addEventListener('click', () => {
+            document.querySelectorAll('.group-checkbox').forEach(cb => {
+                cb.checked = false;
+                groupsChart.setDatasetVisibility(parseInt(cb.value), false);
+            });
+            groupsChart.update();
+        });
+
+        // Products Chart
+        const ctxProducts = document.getElementById('productsChart').getContext('2d');
+        let productsChart;
+
+        const productSelect = document.getElementById('productSelect');
+        const productGroupSelect = document.getElementById('productGroupSelect');
+        const allProductOptions = Array.from(productSelect.options);
+
+        function initProductChart() {
+            if (productsChart) productsChart.destroy();
+
+            const selectedGroup = productGroupSelect.value;
+            const selectedProductIndex = productSelect.value;
+
+            let datasets = [];
+
+            if (selectedProductIndex !== 'all') {
+                // Single product selected
+                datasets = [historyData.products[selectedProductIndex]];
+            } else {
+                // All products selected, filter by group if needed
+                datasets = historyData.products.filter(p => {
+                    return selectedGroup === 'all' || p.group === selectedGroup;
+                });
+            }
+
+            productsChart = new Chart(ctxProducts, {
+                type: 'line',
+                data: {
+                    labels: historyData.dates,
+                    datasets: datasets.map((p, i) => ({
+                        label: p.label + ' (' + p.group + ')',
+                        data: p.data,
+                        borderColor: `hsl(${Math.random() * 360}, 70%, 50%)`,
+                        tension: 0.1,
+                        hidden: datasets.length > 5 && i > 5 // Hide others by default if too many
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            display: datasets.length <= 10
+                        }
+                    }
+                }
+            });
+        }
+
+        function filterProductOptions() {
+            const selectedGroup = productGroupSelect.value;
+
+            // Reset options
+            productSelect.innerHTML = '';
+
+            allProductOptions.forEach(opt => {
+                if (selectedGroup === 'all' || opt.value === 'all' || opt.dataset.group === selectedGroup) {
+                    productSelect.appendChild(opt);
+                }
+            });
+
+            // Reset selection to 'all' if current selection is hidden
+            if (productSelect.value === '') {
+                productSelect.value = 'all';
+            }
+
+            initProductChart();
+        }
+
+        initProductChart();
+
+        productSelect.addEventListener('change', initProductChart);
+        productGroupSelect.addEventListener('change', filterProductOptions);
+    </script>
+    {% endif %}
+</div>
+{% endblock %}
+```

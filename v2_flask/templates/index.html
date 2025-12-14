@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="card text-center" style="padding: 4rem 2rem;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">Controle de Estoque</h1>
+    <p style="color: var(--secondary-color); margin-bottom: 2rem; font-size: 1.1rem;">
+        Gerencie seu estoque de forma simples e eficiente.
+    </p>
+
+    <div style="display: flex; justify-content: center; gap: 1rem;">
+        <a href="{{ url_for('count') }}" class="btn btn-primary" style="padding: 0.75rem 1.5rem; font-size: 1.1rem;">
+            Nova Contagem
+        </a>
+        <a href="{{ url_for('reports') }}" class="btn"
+            style="background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 0.75rem 1.5rem; font-size: 1.1rem;">
+            Ver Relatórios
+        </a>
+    </div>
+</div>
+{% endblock %}
