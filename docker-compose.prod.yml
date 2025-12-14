@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   klasmel-app:
-    image: SEU_USUARIO_DOCKER/klasmel-app:latest
+    image: ivanegri/klasmel-app:latest
     container_name: klasmel_container
     ports:
       - "8501:8501"
