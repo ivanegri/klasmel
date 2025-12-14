@@ -20,7 +20,7 @@ Este sistema foi desenvolvido para facilitar o gerenciamento do estoque e o plan
 
 ---
 **Instruções Rápidas:**
-1. Mantenha o arquivo `Base_estoque.xlsx` atualizado na pasta raiz.
+1. Mantenha o arquivo `data/Base_estoque.xlsx` atualizado na pasta raiz.
 2. Ao finalizar uma contagem, um novo arquivo com a data será gerado.
 3. O relatório sempre busca o arquivo de contagem mais recente por padrão.
 """)

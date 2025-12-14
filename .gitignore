@@ -4,4 +4,3 @@ __pycache__/
 .streamlit/
 *.xlsx
 !Base_estoque.xlsx
-docker-compose.prod.yml

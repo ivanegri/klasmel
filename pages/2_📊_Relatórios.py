@@ -10,12 +10,13 @@ st.title("📊 Relatório de Estoque e Planejamento")
 
 # Função para listar arquivos de contagem
 def list_count_files():
-    files = glob.glob("*_contagem.xlsx")
+    files = glob.glob("data/*_contagem.xlsx")
     file_data = []
     for f in files:
         try:
-            # Extrair data do nome do arquivo (DD-MM-YYYY_contagem.xlsx)
-            date_str = f.split("_")[0]
+            # Extrair data do nome do arquivo (data/DD-MM-YYYY_contagem.xlsx)
+            filename = os.path.basename(f)
+            date_str = filename.split("_")[0]
             date_obj = datetime.strptime(date_str, "%d-%m-%Y")
             file_data.append({"file": f, "date": date_obj})
         except Exception:

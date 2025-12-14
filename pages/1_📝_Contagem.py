@@ -6,7 +6,7 @@ from datetime import datetime
 # Configuração da página
 st.set_page_config(page_title="Contagem de Estoque", layout="wide")
 
-FILE_PATH = 'Base_estoque.xlsx'
+FILE_PATH = 'data/Base_estoque.xlsx'
 
 def load_data():
     if os.path.exists(FILE_PATH):
@@ -58,7 +58,7 @@ def save_data(df, selected_date):
         
         # Salvar no arquivo com o nome da data selecionada
         date_str = selected_date.strftime("%d-%m-%Y")
-        file_name = f"{date_str}_contagem.xlsx"
+        file_name = f"data/{date_str}_contagem.xlsx"
         
         df.to_excel(file_name, index=False)
         st.success(f"Contagem registrada com sucesso em {file_name}!")
