@@ -1,12 +1,10 @@
 version: '3.8'
 
 services:
-  klasmel-app-v2:
-    build:
-      context: .
-      dockerfile: Dockerfile.v2
-    image: klasmel-app:v2
-    container_name: klasmel_container_v2
+  klasmel-app:
+    build: .
+    image: klasmel-app:latest
+    container_name: klasmel_container
     ports:
       - "5000:5000"
     volumes:

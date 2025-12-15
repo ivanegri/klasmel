@@ -2,14 +2,18 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
+# Copy requirements from the v2_flask directory
+COPY v2_flask/requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Create data directory
 RUN mkdir -p data
 
+# Copy the entire project
 COPY . .
 
-EXPOSE 8501
+EXPOSE 5000
 
-CMD ["streamlit", "run", "Home.py", "--server.port=8501", "--server.address=0.0.0.0"]
+# Run the Flask application
+CMD ["python", "v2_flask/app.py"]

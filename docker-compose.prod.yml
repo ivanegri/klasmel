@@ -3,7 +3,7 @@ services:
     image: ivanegri/klasmel-app:latest
     container_name: klasmel_container
     ports:
-      - "8501:8501"
+      - "5000:5000"
     volumes:
       - ./:/app/data
     restart: unless-stopped
