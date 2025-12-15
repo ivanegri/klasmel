@@ -44,8 +44,8 @@ docker-compose ps
 Você deve ver `klasmel_container_v2` com status `Up`.
 
 ## 6. Acessar a Aplicação
-A nova versão estará rodando na porta **5000**.
-Acesse pelo navegador: `http://SEU_IP_DA_VM:5000`
+A nova versão estará rodando na porta **5001**.
+Acesse pelo navegador: `http://SEU_IP_DA_VM:5001`
 
 ---
 **Nota sobre os Dados:**
